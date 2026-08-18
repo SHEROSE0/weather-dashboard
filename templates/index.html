@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Weather Dashboard</title>
+    <!-- Tailwind CSS for quick, beautiful styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-sky-400 to-indigo-600 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 w-full max-w-md">
+        <!-- App Title -->
+        <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-6">🌤️ Weather Finder</h1>
+
+        <!-- Search Form -->
+        <form method="POST" class="flex gap-2 mb-6">
+            <input 
+                type="text" 
+                name="city" 
+                placeholder="Enter city name..." 
+                required
+                class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700"
+            >
+            <button 
+                type="submit" 
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition duration-200 shadow-md">
+                Search
+            </button>
+        </form>
+
+        <!-- Error Message (if city is invalid) -->
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4 text-center">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <!-- Weather Results Card -->
+        {% if weather %}
+            <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-6 text-center shadow-inner">
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ weather.name }}, {{ weather.sys.country }}</h2>
+                <p class="text-gray-500 capitalize mb-4">{{ weather.weather[0].description }}</p>
+                
+                <div class="text-5xl font-extrabold text-indigo-600 mb-4">
+                    {{ weather.main.temp }}°C
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 border-t border-indigo-200 pt-4">
+                    <div>
+                        <span class="block font-semibold text-gray-800">Humidity</span>
+                        {{ weather.main.humidity }}%
+                    </div>
+                    <div>
+                        <span class="block font-semibold text-gray-800">Wind Speed</span>
+                        {{ weather.wind.speed }} m/s
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
