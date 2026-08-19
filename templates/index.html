@@ -4,16 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Weather Dashboard</title>
-    <!-- Tailwind CSS for quick, beautiful styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom animation that loops between sunny and rainy background vibes */
+        @keyframes weatherCycle {
+            0% {
+                background: linear-gradient(to bottom right, #38bdf8, #6366f1); /* Sunny sky blue to indigo */
+            }
+            50% {
+                background: linear-gradient(to bottom right, #475569, #1e293b); /* Rainy moody slate/dark */
+            }
+            100% {
+                background: linear-gradient(to bottom right, #38bdf8, #6366f1); /* Back to sunny */
+            }
+        }
+
+        .animated-weather-bg {
+            animation: weatherCycle 12s infinite ease-in-out;
+        }
+
+        /* Simple floating/pulse animation for the weather emoji/icon */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9)); }
+        }
+
+        .weather-icon-anim {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-sky-400 to-indigo-600 min-h-screen flex items-center justify-center p-4">
+<body class="animated-weather-bg min-h-screen flex items-center justify-center p-4 transition-all duration-1000">
 
     <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 w-full max-w-md">
-        <!-- App Title -->
-        <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-6">🌤️ Weather Finder</h1>
+        <!-- App Title with Animated Icon -->
+        <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-6 flex items-center justify-center gap-2">
+            <span class="weather-icon-anim inline-block">🌤️</span> Weather Finder
+        </h1>
 
-        <!-- Search Form -->
+        <!-- Rest of your form, error, and weather results stay exactly the same -->
         <form method="POST" class="flex gap-2 mb-6">
             <input 
                 type="text" 
@@ -29,14 +59,12 @@
             </button>
         </form>
 
-        <!-- Error Message (if city is invalid) -->
         {% if error %}
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4 text-center">
                 {{ error }}
             </div>
         {% endif %}
 
-        <!-- Weather Results Card -->
         {% if weather %}
             <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-6 text-center shadow-inner">
                 <h2 class="text-2xl font-bold text-gray-800 mb-1">{{ weather.name }}, {{ weather.sys.country }}</h2>
