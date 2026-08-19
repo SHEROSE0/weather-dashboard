@@ -13,13 +13,23 @@
         .weather-art {
             animation: floatAnim 4s ease-in-out infinite;
         }
+        /* Canvas background styling */
+        #weather-canvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 min-h-screen flex items-center justify-center p-4 text-white">
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 min-h-screen flex items-center justify-center p-4 text-white relative overflow-hidden">
 
-    <div class="bg-slate-900/80 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-3xl p-8 w-full max-w-md relative overflow-hidden">
+    <!-- Dynamic Weather Particle Background Canvas -->
+    <canvas id="weather-canvas"></canvas>
+
+    <div class="bg-slate-900/80 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-3xl p-8 w-full max-w-md relative z-10">
         
-        <!-- Ambient background glow -->
+        <!-- Ambient background glows -->
         <div class="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -31,13 +41,13 @@
             <input 
                 type="text" 
                 name="city" 
-                placeholder="Enter city (e.g. Lagos, Oslo)..." 
+                placeholder="Enter city (e.g. Lagos, Oslo, London)..." 
                 required
                 class="flex-1 px-4 py-3 bg-white/5 border border-white/15 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 text-white placeholder-gray-400 text-sm shadow-inner"
             >
             <button 
                 type="submit" 
-                class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition duration-200 shadow-lg text-sm">
+                class="bg-sky-500 hover:bg-sky-400	 text-slate-950 font-bold px-5 py-3 rounded-xl transition duration-200 shadow-lg text-sm">
                 Search
             </button>
         </form>
@@ -49,36 +59,19 @@
         {% endif %}
 
         {% if weather %}
+            {% set condition = weather.weather[0].main | lower %}
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center shadow-inner backdrop-blur-md relative z-10">
                 
-                <!-- Dynamic Weather Art Illustrations based on API condition -->
+                <!-- Dynamic Art Based on Search Results -->
                 <div class="flex justify-center mb-4 weather-art">
-                    {% set condition = weather.weather[0].main | lower %}
-                    
                     {% if 'clear' in condition %}
-                        <!-- SUNNY ART -->
-                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(251,191,36,0.5)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="32" cy="32" r="14" fill="#FBBF24"/>
-                            <path d="M32 8V4M32 60v-4M56 32h4M4 32h4M49.657 14.343l2.828-2.828M11.515 52.485l2.828-2.828M49.657 49.657l2.828 2.828M11.515 11.515l2.828 2.828" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
-                    {% elif 'rain' in condition or 'drizzle' in condition %}
-                        <!-- RAIN ART -->
-                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(56,189,248,0.5)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M46 28a12 12 0 00-23.2-3.8A10 10 0 0014 34a10 10 0 0010 10h22a10 10 0 000-20z" fill="#94A3B8"/>
-                            <path d="M22 48l-3 6M32 48l-3 6M42 48l-3 6" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
+                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(251,191,36,0.6)]" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="14" fill="#FBBF24"/><path d="M32 8V4M32 60v-4M56 32h4M4 32h4M49.657 14.343l2.828-2.828M11.515 52.485l2.828-2.828M49.657 49.657l2.828 2.828M11.515 11.515l2.828 2.828" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/></svg>
+                    {% elif 'rain' in condition or 'drizzle' in condition or 'thunderstorm' in condition %}
+                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(56,189,248,0.6)]" viewBox="0 0 64 64" fill="none"><path d="M46 28a12 12 0 00-23.2-3.8A10 10 0 0014 34a10 10 0 0010 10h22a10 10 0 000-20z" fill="#94A3B8"/><path d="M22 48l-3 6M32 48l-3 6M42 48l-3 6" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/></svg>
                     {% elif 'snow' in condition %}
-                        <!-- SNOW ART -->
-                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(255,255,255,0.5)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M46 28a12 12 0 00-23.2-3.8A10 10 0 0014 34a10 10 0 0010 10h22a10 10 0 000-20z" fill="#CBD5E1"/>
-                            <circle cx="22" cy="50" r="2" fill="#E2E8F0"/><circle cx="32" cy="52" r="2" fill="#E2E8F0"/><circle cx="42" cy="49" r="2" fill="#E2E8F0"/>
-                        </svg>
+                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(255,255,255,0.6)]" viewBox="0 0 64 64" fill="none"><path d="M46 28a12 12 0 00-23.2-3.8A10 10 0 0014 34a10 10 0 0010 10h22a10 10 0 000-20z" fill="#CBD5E1"/><circle cx="22" cy="50" r="2" fill="#E2E8F0"/><circle cx="32" cy="52" r="2" fill="#E2E8F0"/><circle cx="42" cy="49" r="2" fill="#E2E8F0"/></svg>
                     {% else %}
-                        <!-- CLOUDY / DEFAULT ART -->
-                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(148,163,184,0.4)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M46 26a14 14 0 00-26.8-4.4A12 12 0 0012 34a12 12 0 0012 12h22a12 12 0 000-24z" fill="#64748B"/>
-                            <path d="M38 20a10 10 0 00-19.1-3.2A8 8 0 0013 24a8 8 0 008 8h19a8 8 0 000-16z" fill="#94A3B8"/>
-                        </svg>
+                        <svg class="w-32 h-32 drop-shadow-[0_0_25px_rgba(148,163,184,0.5)]" viewBox="0 0 64 64" fill="none"><path d="M46 26a14 14 0 00-26.8-4.4A12 12 0 0012 34a12 12 0 0012 12h22a12 12 0 000-24z" fill="#64748B"/><path d="M38 20a10 10 0 00-19.1-3.2A8 8 0 0013 24a8 8 0 008 8h19a8 8 0 000-16z" fill="#94A3B8"/></svg>
                     {% endif %}
                 </div>
 
@@ -100,8 +93,108 @@
                     </div>
                 </div>
             </div>
+        {% else %}
+            <!-- DEFAULT LANDING VIEW: Shows Sun, Cloud, Rain preview graphic before searching -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center shadow-inner backdrop-blur-md relative z-10">
+                <div class="flex justify-center items-center gap-3 mb-4 weather-art">
+                    <!-- Combined Sun + Cloud + Rain Preview Icon -->
+                    <svg class="w-36 h-36 drop-shadow-[0_0_20px_rgba(56,189,248,0.4)]" viewBox="0 0 64 64" fill="none">
+                        <circle cx="24" cy="24" r="10" fill="#FBBF24"/>
+                        <path d="M42 30a10 10 0 00-19.3-3.1A8 8 0 0016 35a8 8 0 008 8h18a8 8 0 000-16z" fill="#94A3B8"/>
+                        <path d="M24 47l-2 4M32 47l-2 4M40 47l-2 4" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold mb-1">Welcome to Weather Finder</h2>
+                <p class="text-gray-300 text-sm mb-2">Search any city above to view live atmospheric conditions, temperatures, and cinematic background animations.</p>
+            </div>
         {% endif %}
     </div>
 
+    <!-- JavaScript Particle Engine for Rain, Snow, and Sun Glow effects -->
+    <script>
+        const canvas = document.getElementById('weather-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Pass weather condition safely from Flask to JavaScript
+        const weatherCondition = "{{ condition if weather else 'default' }}".toLowerCase();
+
+        let particles = [];
+        
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                
+                if (weatherCondition.includes('snow')) {
+                    this.size = Math.random() * 3 + 1;
+                    this.speedY = Math.random() * 1.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 1;
+                } else {
+                    // Rain / Drizzle / Thunderstorm
+                    this.width = Math.random() * 1.5 + 0.5;
+                    this.height = Math.random() * 20 + 10;
+                    this.speedY = Math.random() * 12 + 8;
+                    this.speedX = -1;
+                }
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.fillStyle = weatherCondition.includes('snow') ? 'rgba(255, 255, 255, 0.8)' : 'rgba(56, 189, 248, 0.6)';
+                if (weatherCondition.includes('snow')) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            }
+        }
+
+        // Initialize particles if weather is rain or snow
+        if (weatherCondition.includes('rain') || weatherCondition.includes('drizzle') || weatherCondition.includes('thunderstorm') || weatherCondition.includes('snow')) {
+            const count = weatherCondition.includes('snow') ? 60 : 100;
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // If sunny or clear, draw a subtle ambient sunbeam glow in the top corner
+            if (weatherCondition.includes('clear')) {
+                let gradient = ctx.createRadialGradient(canvas.width * 0.8, 50, 10, canvas.width * 0.8, 50, 400);
+                gradient.addColorStop(0, 'rgba(251, 191, 36, 0.15)');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // Animate particles (rain/snow)
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
