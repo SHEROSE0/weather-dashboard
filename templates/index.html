@@ -5,106 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Weather Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @keyframes cinematicWeatherCycle {
-            0%, 33% {
-                background: linear-gradient(135deg, #b45309, #78350f, #18181b);
-            }
-            34%, 66% {
-                background: linear-gradient(135deg, #0369a1, #1e3a8a, #0f172a);
-            }
-            67%, 100% {
-                background: linear-gradient(135deg, #334155, #1e293b, #020617);
-            }
-        }
-
-        .animated-weather-bg {
-            animation: cinematicWeatherCycle 15s infinite ease-in-out;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.8)); }
-            50% { transform: scale(1.08) translateY(-5px); filter: drop-shadow(0 0 25px rgba(251, 191, 36, 1)); }
-        }
-
-        .weather-icon-anim {
-            animation: pulseGlow 4s infinite ease-in-out;
-        }
-
-        /* Floating particle/raindrop/snowflake animation */
-        @keyframes fall {
-            0% { transform: translateY(-10vh) translateX(0); opacity: 0; }
-            20% { opacity: 0.8; }
-            80% { opacity: 0.8; }
-            100% { transform: translateY(105vh) translateX(20px); opacity: 0; }
-        }
-
-        .particle {
-            position: absolute;
-            top: -20px;
-            background: rgba(255, 255, 255, 0.6);
-            pointer-events: none;
-            border-radius: 50%;
-            animation: fall linear infinite;
-        }
-    </style>
 </head>
-<body class="animated-weather-bg min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-all duration-1000">
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 min-h-screen flex items-center justify-center p-4 text-white">
 
-    <!-- Background Floating Particles (Rain/Snow effect) -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="particle" style="left: 10%; width: 3px; height: 15px; animation-duration: 4s; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 25%; width: 4px; height: 4px; animation-duration: 6s; animation-delay: 1s;"></div>
-        <div class="particle" style="left: 40%; width: 2px; height: 12px; animation-duration: 3.5s; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 55%; width: 5px; height: 5px; animation-duration: 7s; animation-delay: 0.5s;"></div>
-        <div class="particle" style="left: 70%; width: 3px; height: 15px; animation-duration: 4.5s; animation-delay: 1.5s;"></div>
-        <div class="particle" style="left: 85%; width: 4px; height: 4px; animation-duration: 5.5s; animation-delay: 2.5s;"></div>
-        <div class="particle" style="left: 92%; width: 2px; height: 10px; animation-duration: 3s; animation-delay: 0.8s;"></div>
-    </div>
-
-    <div class="bg-slate-900/80 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-8 w-full max-w-md text-white relative z-10">
-        <h1 class="text-3xl font-extrabold text-center mb-6 flex items-center justify-center gap-2 tracking-wide">
-            <span class="weather-icon-anim inline-block">☀️</span> Weather Finder
+    <div class="bg-slate-900/90 backdrop-blur-xl border border-white/15 shadow-2xl rounded-3xl p-8 w-full max-w-md">
+        <h1 class="text-3xl font-extrabold text-center mb-6 flex items-center justify-center gap-2">
+            <span>🌍</span> Weather Finder
         </h1>
 
         <form method="POST" class="flex gap-2 mb-6">
             <input 
                 type="text" 
                 name="city" 
-                placeholder="Enter city name..." 
+                placeholder="Enter city name (e.g. London, Oslo)..." 
                 required
-                class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-400 text-white placeholder-gray-400"
+                class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 text-white placeholder-gray-400"
             >
             <button 
                 type="submit" 
-                class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-3 rounded-xl transition duration-200 shadow-md">
+                class="bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold px-6 py-3 rounded-xl transition duration-200 shadow-md">
                 Search
             </button>
         </form>
 
         {% if error %}
-            <div class="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-xl mb-4 text-center">
+            <div class="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-xl mb-4 text-center text-sm">
                 {{ error }}
             </div>
         {% endif %}
 
         {% if weather %}
             <div class="bg-white/10 border border-white/10 rounded-2xl p-6 text-center shadow-inner backdrop-blur-md">
-                <h2 class="text-2xl font-bold mb-1">{{ weather.name }}, {{ weather.sys.country }}</h2>
-                <p class="text-gray-300 capitalize mb-4">{{ weather.weather[0].description }}</p>
                 
-                <div class="text-5xl font-extrabold text-amber-400 mb-4">
+                <!-- Dynamic Weather Icon from OpenWeatherMap API -->
+                <div class="flex justify-center mb-2">
+                    <img src="http://openweathermap.org/img/wn/{{ weather.weather[0].icon }}@4x.png" alt="Weather Icon" class="w-28 h-28 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                </div>
+
+                <h2 class="text-2xl font-bold mb-1">{{ weather.name }}, {{ weather.sys.country }}</h2>
+                <p class="text-sky-300 font-medium capitalize text-lg mb-4">{{ weather.weather[0].description }}</p>
+                
+                <div class="text-6xl font-black text-white mb-6 tracking-tight">
                     {{ weather.main.temp }}°C
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 text-sm text-gray-300 border-t border-white/10 pt-4">
-                    <div>
-                        <span class="block font-semibold text-white">Humidity</span>
-                        {{ weather.main.humidity }}%
+                <div class="grid grid-cols-2 gap-4 text-sm text-gray-300 border-t border-white/15 pt-4">
+                    <div class="bg-white/5 p-3 rounded-xl">
+                        <span class="block text-xs text-gray-400 uppercase tracking-wider mb-1">Humidity</span>
+                        <span class="text-lg font-bold text-white">{{ weather.main.humidity }}%</span>
                     </div>
-                    <div>
-                        <span class="block font-semibold text-white">Wind Speed</span>
-                        {{ weather.wind.speed }} m/s
+                    <div class="bg-white/5 p-3 rounded-xl">
+                        <span class="block text-xs text-gray-400 uppercase tracking-wider mb-1">Wind Speed</span>
+                        <span class="text-lg font-bold text-white">{{ weather.wind.speed }} m/s</span>
                     </div>
                 </div>
             </div>
